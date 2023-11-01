@@ -235,6 +235,26 @@ namespace IntakeQ.ApiClient
             }
         }
 
+        public async Task<byte[]> DownloadConsent(string id, string consentFormId)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                var requestType = "intakes";
+                var request = GetHttpMessage($"{requestType}/{id}/consent/{consentFormId}/pdf", HttpMethod.Get);
+
+                HttpResponseMessage response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var bytes = await response.Content.ReadAsByteArrayAsync();
+                    return bytes;
+                }
+                else
+                {
+                    throw new HttpRequestException(await response.Content.ReadAsStringAsync());
+                }
+            }
+        }
+
         public async Task<IEnumerable<Client>> GetClients(string search = null, int? pageNumber = null, DateTime? dateCreatedStart = null, DateTime? dateCreatedEnd = null, Dictionary<string, string> customFields = null, string externalClientId = null)
         {
             using (HttpClient client = new HttpClient())
